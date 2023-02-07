@@ -42,15 +42,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   openBottomSheet(BuildContext context) {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder: (context) => NewTransactions(onPressed: _addTransactions),
     );
   }
 
-  _addTransactions(String title, double amount) {
-    var transaction = Transactions('t1', title, amount, DateTime.now());
+  _addTransactions(String title, double amount, DateTime chosenDate) {
+    var transaction =
+        Transactions(DateTime.now().toString(), title, amount, chosenDate);
     setState(() {
       transactionList.add(transaction);
+    });
+  }
+
+  _deleteTransaction(String id) {
+    setState(() {
+      transactionList.removeWhere((element) => element.id == id);
     });
   }
 
@@ -68,7 +76,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: [
             Chart(recentTransactions: _recentTransactions),
-            TransactionList(transactionList: transactionList)
+            TransactionList(
+              transactionList: transactionList,
+              delete: _deleteTransaction,
+            )
           ],
         ),
       ),
